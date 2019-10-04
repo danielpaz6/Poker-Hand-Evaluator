@@ -233,14 +233,23 @@ namespace PokerHandEvaluator
 
                         foreach (string suit in suits)
                         {
-                            var suitCards = SevenCards.Where(x => x[1].Equals(suit)).ToList();
+                            var suitCards = SevenCards.Where(x => x[1].Equals(suit));
                             int suitCardsLen = suitCards.Count();
                             if (suitCardsLen >= 5)
                             {
+                                // We only want the five last card
+                                var suitCardsResult = suitCards.Skip(suitCardsLen - 5).ToList();
                                 rankName = "Flush";
-                                rank = 500 + (double)Int32.Parse(suitCards[suitCardsLen - 1][0]) / 14 * 99;
+                                //rank = 500 + (double)Int32.Parse(suitCardsResult[suitCardsLen - 1][0]) / 14 * 99;
+                                rank = 500;
+                                for(int i = 0; i < 5; i++)
+                                {
+                                    // We'll evaluate the 5 flush card in a way that the x+1 card always more important than x.
+                                    // For example, Ace in the 1st position = 14 + 0, and Two on the 2nd position worth 1 + 1/7.
+                                    rank += (double)Int32.Parse(suitCardsResult[i][0]) / 14 + i;
+                                }
 
-                                rankCards.AddRange(suitCards.Skip(suitCardsLen - 5));
+                                rankCards.AddRange(suitCardsResult);
                                 break;
                             }
                         }
@@ -281,14 +290,14 @@ namespace PokerHandEvaluator
                                 {
                                     double tmpSaveMax = Math.Max(duplicates[0][1], duplicates[1][1]);
 
-                                    rank = 300 + tmpSaveMax / 14 * 99;
+                                    rank = 300 + tmpSaveMax / 14 * 99 + (double)maxCardValue / 14;
 
                                     for (int i = 0; i < 3; i++)
                                         rankCards.Add(new string[] { tmpSaveMax.ToString(), null });
                                 }
                                 else
                                 {
-                                    rank = 300 + duplicates[0][1] / 14 * 99;
+                                    rank = 300 + duplicates[0][1] / 14 * 99 + (double)maxCardValue / 14;
 
                                     for (int i = 0; i < 3; i++)
                                         rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
@@ -303,7 +312,7 @@ namespace PokerHandEvaluator
                                 // Edge case: there are 3 pairs of Two Pairs, in that case we'll choose the higher one.
                                 if (duplicates.Count > 2 && duplicates[2][0] == 2)
                                 {
-                                    rank = 200 + Math.Max(duplicates[0][1], Math.Max(duplicates[1][1], duplicates[2][1])) / 14 * 99;
+                                    rank = 200 + Math.Max(duplicates[0][1], Math.Max(duplicates[1][1], duplicates[2][1])) / 14 * 99 + (double)maxCardValue / 14;
 
                                     // We need only the 2 highest pairs from the 3 pairs.
                                     if (duplicates[0][1] > duplicates[1][1])
@@ -333,7 +342,7 @@ namespace PokerHandEvaluator
                                 }
                                 else
                                 {
-                                    rank = 200 + Math.Max(duplicates[0][1], duplicates[1][1]) / 14 * 99;
+                                    rank = 200 + Math.Max(duplicates[0][1], duplicates[1][1]) / 14 * 99 + (double)maxCardValue / 14;
 
                                     for (int i = 0; i < 2; i++)
                                         rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
@@ -347,7 +356,7 @@ namespace PokerHandEvaluator
                             else if (duplicates.Count > 0 && duplicates[0][0] == 2)
                             {
                                 rankName = "Pair";
-                                rank = 100 + duplicates[0][1] / 14 * 99;
+                                rank = 100 + duplicates[0][1] / 14 * 99 + (double)maxCardValue / 14;
 
                                 for (int i = 0; i < 2; i++)
                                     rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
@@ -541,7 +550,8 @@ namespace PokerHandEvaluator
             }
 
             // Sort Descending by rank the handlist
-            handList.Sort((x, y) => (int)(y.Rank - x.Rank));
+            //handList.Sort((x, y) => (int)(y.Rank - x.Rank));
+            handList = handList.OrderByDescending(x => x.Rank).ToList();
 
 
             //handList = handList.GroupBy(x => x.Rank).Select(grp => grp.ToList()).ToList();

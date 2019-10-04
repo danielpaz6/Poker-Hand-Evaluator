@@ -35,14 +35,14 @@ namespace PokerHandEvaluator
             // Suits: club (♣), diamond (♦), heart (♥) and spade (♠).
             Room room = new Room
             {
-                RoomName = "A new Room",
+                RoomName = "Test Room",
                 CardsOnTable = new List<string[]>
                 {
-                    new string[]{"9", "Club"},
-                    new string[]{"7", "Spade"}, 
-                    new string[]{"5", "Heart"},
-                    new string[]{"5", "Spade"},
-                    new string[]{"14", "Club" }
+                    new string[]{"3", "Spade"},
+                    new string[]{"5", "Spade"}, 
+                    new string[]{"7", "Spade"},
+                    new string[]{"9", "Spade"},
+                    new string[]{"12", "Spade" }
                 }
             };
 
@@ -51,8 +51,8 @@ namespace PokerHandEvaluator
                 Name = "Try",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"8", "Heart"},
-                    new string[]{"13", "Spade"},
+                    new string[]{"2", "Heart"},
+                    new string[]{"14", "Heart"},
                 },
                 Chips = 0
             };
@@ -62,8 +62,8 @@ namespace PokerHandEvaluator
                 Name = "B",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"4", "Diamond"},
-                    new string[]{"12", "Spade"},
+                    new string[]{"2", "Spade"},
+                    new string[]{"8", "Diamond"},
                 },
                 Chips = 0
             };
