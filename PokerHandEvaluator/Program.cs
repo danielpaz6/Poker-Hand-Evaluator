@@ -38,21 +38,21 @@ namespace PokerHandEvaluator
                 RoomName = "Test Room",
                 CardsOnTable = new List<string[]>
                 {
-                    new string[]{"3", "Spade"},
-                    new string[]{"5", "Spade"}, 
-                    new string[]{"7", "Spade"},
-                    new string[]{"9", "Spade"},
-                    new string[]{"12", "Spade" }
+                    new string[]{"3", "Diamond"},
+                    new string[]{"3", "Heart"}, 
+                    new string[]{"2", "Spade"},
+                    new string[]{"2", "Club"},
+                    new string[]{"2", "Spade" }
                 }
             };
 
             ApplicationUser user1 = new ApplicationUser
             {
-                Name = "Try",
+                Name = "A",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"2", "Heart"},
-                    new string[]{"14", "Heart"},
+                    new string[]{"14", "Diamond"},
+                    new string[]{"14", "Spade"},
                 },
                 Chips = 0
             };
@@ -62,8 +62,8 @@ namespace PokerHandEvaluator
                 Name = "B",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"2", "Spade"},
-                    new string[]{"8", "Diamond"},
+                    new string[]{"3", "Club"},
+                    new string[]{"4", "Diamond"},
                 },
                 Chips = 0
             };

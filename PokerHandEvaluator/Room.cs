@@ -23,6 +23,33 @@ namespace PokerHandEvaluator
         public int PotOfChair2 { get; set; }
         public int PotOfChair3 { get; set; }
         public int PotOfChair4 { get; set; }
+        
+
+        public double EvaluateRankByHighestCards(List<string[]> cards, int excludeCardValue, int excludeCardValue2 = -1, int limitCheck = 7)
+        {
+            if(cards.Count() != 7)
+                throw new Exception("Card list paramter must include 7 cards.");
+
+            int i = 0;
+            double sum = 0;
+            //foreach(var card in cards)
+            for(int j = 6; j >= 0; j--)
+            {
+                int cardValue = Int32.Parse(cards[j][0]);
+                if (cardValue == excludeCardValue || cardValue == excludeCardValue2)
+                    continue;
+
+                sum += (double)cardValue / 14 + 6-i;
+
+                if (i == limitCheck - 1)
+                    break;
+
+                i++;
+            }
+
+            return (double)sum / 35;
+        }
+
         public HandRank GetPlayerHandRank(ApplicationUser user)
         {
             // SevenCards = UserPlayerCards Union CardsOnTable
@@ -208,23 +235,69 @@ namespace PokerHandEvaluator
                     if (duplicates.Count > 0 && duplicates[0][0] == 4)
                     {
                         rankName = "Four of a kind";
-                        rank = 700 + duplicates[0][1] / 14 * 99;
+                        rank = 700 + duplicates[0][1] / 14 * 50 + EvaluateRankByHighestCards(SevenCards, (int)duplicates[0][1], -1, 1);
 
                         foreach (string suit in suits)
                             rankCards.Add(new string[] { duplicates[0][1].ToString(), suit });
                     }
 
                     // Checks for a Full House, rank: [600, 700)
-                    else if (duplicates.Count > 1 && duplicates[0][0] == 3 && (duplicates[1][0] == 3 || duplicates[1][0] == 2))
+                    // Edge case: there are 2 pairs of 2 and one Pair of 3, for example: 33322AA
+                    else if (duplicates.Count > 2 && duplicates[0][0] == 3 && duplicates[1][0] == 2 && duplicates[2][0] == 2)
+                    {
+                        // In that edge case, we'll check from the two pairs what is greater.
+                        rankName = "Full House";
+                        double maxTmpValue = Math.Max(duplicates[1][1], duplicates[2][1]);
+
+                        rank = 600 + (duplicates[0][1]) + maxTmpValue / 14;
+
+                        for (int i = 0; i < 3; i++)
+                            rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
+
+                        for (int i = 0; i < 2; i++)
+                            rankCards.Add(new string[] { maxTmpValue.ToString(), null });
+                    }
+                    else if (duplicates.Count > 1 && duplicates[0][0] == 3 && duplicates[1][0] == 2)
                     {
                         rankName = "Full House";
-                        rank = 600 + Math.Max(duplicates[0][1], duplicates[1][1]) / 14 * 99;
+                        // double[] threePairsValues = new double[] { duplicates[0][1], duplicates[1][1], duplicates[2][1] };
+                        rank = 600 + (duplicates[0][1]) + duplicates[1][1]/14;
 
                         for (int i = 0; i < 3; i++)
                             rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
 
                         for (int i = 0; i < 2; i++)
                             rankCards.Add(new string[] { duplicates[1][1].ToString(), null });
+                    }
+
+                    // Edge case where there are 2 pairs of Three of a kind
+                    // For example if the cae is 333 222 then we'll check what is better: 333 22 or 222 33.
+                    else if (duplicates.Count > 1 && duplicates[0][0] == 3 && duplicates[1][0] == 3)
+                    {
+                        rankName = "Full House";
+
+                        double rank1, rank2;
+                        rank1 = 600 + (duplicates[0][1]) + duplicates[1][1] / 14;
+                        rank2 = 600 + (duplicates[1][1]) + duplicates[0][1] / 14;
+
+                        if(rank1 > rank2)
+                        {
+                            rank = rank1;
+                            for (int i = 0; i < 3; i++)
+                                rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
+
+                            for (int i = 0; i < 2; i++)
+                                rankCards.Add(new string[] { duplicates[1][1].ToString(), null });
+                        }
+                        else
+                        {
+                            rank = rank2;
+                            for (int i = 0; i < 3; i++)
+                                rankCards.Add(new string[] { duplicates[1][1].ToString(), null });
+
+                            for (int i = 0; i < 2; i++)
+                                rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
+                        }
                     }
 
                     else
@@ -242,7 +315,7 @@ namespace PokerHandEvaluator
                                 rankName = "Flush";
                                 //rank = 500 + (double)Int32.Parse(suitCardsResult[suitCardsLen - 1][0]) / 14 * 99;
                                 rank = 500;
-                                for(int i = 0; i < 5; i++)
+                                for (int i = 0; i < 5; i++)
                                 {
                                     // We'll evaluate the 5 flush card in a way that the x+1 card always more important than x.
                                     // For example, Ace in the 1st position = 14 + 0, and Two on the 2nd position worth 1 + 1/7.
@@ -290,14 +363,14 @@ namespace PokerHandEvaluator
                                 {
                                     double tmpSaveMax = Math.Max(duplicates[0][1], duplicates[1][1]);
 
-                                    rank = 300 + tmpSaveMax / 14 * 99 + (double)maxCardValue / 14;
+                                    rank = 300 + tmpSaveMax / 14 * 50 + EvaluateRankByHighestCards(SevenCards, (int)tmpSaveMax);
 
                                     for (int i = 0; i < 3; i++)
                                         rankCards.Add(new string[] { tmpSaveMax.ToString(), null });
                                 }
                                 else
                                 {
-                                    rank = 300 + duplicates[0][1] / 14 * 99 + (double)maxCardValue / 14;
+                                    rank = 300 + duplicates[0][1] / 14 * 50 + EvaluateRankByHighestCards(SevenCards, (int)duplicates[0][1]);
 
                                     for (int i = 0; i < 3; i++)
                                         rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
@@ -312,37 +385,23 @@ namespace PokerHandEvaluator
                                 // Edge case: there are 3 pairs of Two Pairs, in that case we'll choose the higher one.
                                 if (duplicates.Count > 2 && duplicates[2][0] == 2)
                                 {
-                                    rank = 200 + Math.Max(duplicates[0][1], Math.Max(duplicates[1][1], duplicates[2][1])) / 14 * 99 + (double)maxCardValue / 14;
+                                    //rank = 200 + Math.Max(duplicates[0][1], Math.Max(duplicates[1][1], duplicates[2][1])) / 14 * 99 + (double)maxCardValue / 14;
+
+                                    double[] threePairsValues = new double[] { duplicates[0][1], duplicates[1][1], duplicates[2][1] };
+                                    Array.Sort(threePairsValues, (x, y) => (int)(y - x));
+
+                                    // The reason for 50 is because maxCardValue/14 can be 1, and we don't want to get the score 300.
+                                    // and the reason for /392 instead of /14 is because of calculate two numbers, so in the worst case they both will be 0.5 + 0.5 multiplied by 98 = 98 + 1 = 99.
+                                    rank = 200 + (Math.Pow(threePairsValues[0], 2) / 392 + Math.Pow(threePairsValues[1], 2) / 392) * 50 + EvaluateRankByHighestCards(SevenCards, (int)threePairsValues[0], (int)threePairsValues[1]);
 
                                     // We need only the 2 highest pairs from the 3 pairs.
-                                    if (duplicates[0][1] > duplicates[1][1])
-                                    {
-                                        for (int i = 0; i < 2; i++)
-                                            rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
-
-                                        if (duplicates[1][1] > duplicates[2][1])
-                                            for (int i = 0; i < 2; i++)
-                                                rankCards.Add(new string[] { duplicates[1][1].ToString(), null });
-                                        else
-                                            for (int i = 0; i < 2; i++)
-                                                rankCards.Add(new string[] { duplicates[2][1].ToString(), null });
-                                    }
-                                    else
-                                    {
-                                        for (int i = 0; i < 2; i++)
-                                            rankCards.Add(new string[] { duplicates[1][1].ToString(), null });
-
-                                        if (duplicates[0][1] > duplicates[2][1])
-                                            for (int i = 0; i < 2; i++)
-                                                rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
-                                        else
-                                            for (int i = 0; i < 2; i++)
-                                                rankCards.Add(new string[] { duplicates[2][1].ToString(), null });
-                                    }
+                                    rankCards.Add(new string[] { threePairsValues[0].ToString(), null });
+                                    rankCards.Add(new string[] { threePairsValues[1].ToString(), null });
                                 }
                                 else
                                 {
-                                    rank = 200 + Math.Max(duplicates[0][1], duplicates[1][1]) / 14 * 99 + (double)maxCardValue / 14;
+                                    //rank = 200 + Math.Max(duplicates[0][1], duplicates[1][1]) / 14 * 99 + EvaluateRankByHighestCards(SevenCards, (int)duplicates[0][1], (int)duplicates[1][1]);
+                                    rank = 200 + (Math.Pow(duplicates[0][1], 2) / 392 + Math.Pow(duplicates[1][1], 2) / 392) * 50 + EvaluateRankByHighestCards(SevenCards, (int)duplicates[0][1], (int)duplicates[1][1]);
 
                                     for (int i = 0; i < 2; i++)
                                         rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
@@ -356,7 +415,7 @@ namespace PokerHandEvaluator
                             else if (duplicates.Count > 0 && duplicates[0][0] == 2)
                             {
                                 rankName = "Pair";
-                                rank = 100 + duplicates[0][1] / 14 * 99 + (double)maxCardValue / 14;
+                                rank = 100 + duplicates[0][1] / 14 * 50 + EvaluateRankByHighestCards(SevenCards, (int)duplicates[0][1], -1, 3);
 
                                 for (int i = 0; i < 2; i++)
                                     rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
@@ -366,7 +425,7 @@ namespace PokerHandEvaluator
                             else
                             {
                                 rankName = "High Card";
-                                rank = (double)maxCardValue / 14 * 99;
+                                rank = EvaluateRankByHighestCards(SevenCards, -1, -1, 5);
 
                                 rankCards.Add(new string[] { maxCardValue.ToString(), null });
                             }
