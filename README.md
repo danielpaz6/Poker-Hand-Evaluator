@@ -46,7 +46,7 @@ This text you see here is *actually* written in Markdown! To get a feel for Mark
 
 If we put aside different end cases for a moment, the main problem with solving the card evaluation problem is as follows:
 We want a player with higher card to win players with less good cards,
-and in the case of Taco we will move on to look at the next card and so on.
+and in the case of tie we will move on to look at the next card and so on.
 
 However, we don't want to make comparisons every time, so we want to work with a method of assessment and scoring for each player's hand instead.
 
@@ -115,4 +115,74 @@ Therefore, we'll use our method: `EvaluateRankByHighestCards()` to ignore the `F
 
 ### Full House `Group Range: [600, 700)`
 
+Main check: if duplicates.Count(), it can occur for example if we have 22 and 55,, and the 2nd condition is if the count of duplicates is 3 and then 2, so it will happen in case of 22255 for example.
 
+**Edge cases:**
+
+1. It is possible to have 2 pairs of 3, for example: ( remember that we have 7 cards to check )
+
+
+| <img src="images/2-heart.png" width="60" /> | <img src="images/2-diamond.png" width="60" /> | <img src="images/2-spade.png" width="60" /> | <img src="images/3-club.png" width="60" /> | <img src="images/3-diamond.png" width="60" /> | <img src="images/3-heart.png" width="60" /> |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+
+In that case evaluate what is better: 333 22 or 222 33 and will take the max score among them.
+
+2. One pair of 3 and two pairs of 2, for example:
+
+| <img src="images/5-heart.png" width="60" /> | <img src="images/5-diamond.png" width="60" /> | <img src="images/5-spade.png" width="60" /> | <img src="images/2-club.png" width="60" /> | <img src="images/2-diamond.png" width="60" /> | <img src="images/4-heart.png" width="60" /> | <img src="images/4-diamond.png" width="60" /> |
+| ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+
+In that case we'll evaluate what is better: the Pair of the 3 ( 555 ) with the first pair ( 22 ) or the second: 555 44 and take the max score among them.
+
+### Flush `Group Range: [500, 600)`
+
+We walk through every `SevenCards.Where(x => x[1].Equals(suit));` which means every group of cards collected by their suit, and if the count is bigger or equals to 5, we'll save it as `suitCards` and we will evaluate the card by: 500 + `EvaluateRankByHighestCards()` method on this list.
+
+
+**Edge case:**
+
+We can have a list of grather than 5 in that case since the cards already sorted by their value, we'll take only the last 5 cards by doing: `var suitCardsResult = suitCards.Skip(suitCardsLen - 5).ToList();`
+
+### Straight `Group Range: [400, 500)`
+
+We already have a variable from the pre-evaluation that saved for us the sequence max count, and if it's bigger or equals to 5 we'll check of the highest card in the sequence to evaluate the rank's hand:
+
+ `rank = 400 + (double)seqMaxValue / 14 * 99;`
+ 
+ **Edge Case:**
+ 
+ Same as Straight Flush, there might be this situation:
+ 
+ 
+| <img src="images/2-heart.png" width="60" /> | <img src="images/3-spade.png" width="60" /> | <img src="images/4-club.png" width="60" /> | <img src="images/5-diamond.png" width="60" /> | <img src="images/14-heart.png" width="60" /> |
+| ------ | ------ | ------ | ------ | ------ |
+
+In that case we'll refer this cards as Straight with seqMaxValue = 5.
+
+### Three of a kind `Group Range: [300, 400)`
+
+We will check if duplicates.Count >= 1 and that the duplicates amount is 3.
+
+Now the calculation is:
+
+`300 + DuplicatedCardValue / 14 * 50 + EvaluateRankByHighestCards(SevenCards, Ignore: DuplicatedCardValue)`
+
+The math behind: We need to make a formula so no matter how small is the Three of a kind, it will win others with smaller three of a kind, for example:
+
+If I have: 555 2 3 and someone has 333 A K, even though my A and K are really big, I'll lose. and we can achieve that by doing DuplicatedCardValue / 14 * 50 that even the smallest number: `(duplicatedCardValue: 2 / 14 * 50)` will be bigger than these A and K.
+
+### Two Pairs `Group Range: [200, 300)`
+
+We'll check for two duplicates. and evaluate the score accordingly. 
+
+**Edge Case:**
+
+There are 3 pairs of two, in that case we'll choose the two highest pairs.
+
+### Pair `Group Range: [100, 200)`
+
+There's only one pair, otherwise we would have entered the "Two Pair" case, so we'll just evaluate the rank with this pair card value and the rest of the cards with `EvaluateRankByHighestCards()` method.
+
+### High Card `Group Range: [0, 100)`
+
+Otherwise, if we couldn't find anything else, we'll just `EvaluateRankByHighestCards()` the rest of the cards.
