@@ -38,11 +38,11 @@ namespace PokerHandEvaluator
                 RoomName = "Test Room",
                 CardsOnTable = new List<string[]>
                 {
+                    new string[]{"4", "Club"},
+                    new string[]{"5", "Club"}, 
                     new string[]{"3", "Diamond"},
-                    new string[]{"3", "Heart"}, 
-                    new string[]{"2", "Spade"},
-                    new string[]{"2", "Club"},
-                    new string[]{"2", "Spade" }
+                    new string[]{"5", "Spade"},
+                    new string[]{"10", "Club" }
                 }
             };
 
@@ -51,8 +51,8 @@ namespace PokerHandEvaluator
                 Name = "A",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"14", "Diamond"},
-                    new string[]{"14", "Spade"},
+                    new string[]{"3", "Club"},
+                    new string[]{"13", "Club"},
                 },
                 Chips = 0
             };
@@ -62,8 +62,8 @@ namespace PokerHandEvaluator
                 Name = "B",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"3", "Club"},
-                    new string[]{"4", "Diamond"},
+                    new string[]{"7", "Club"},
+                    new string[]{"12", "Club"},
                 },
                 Chips = 0
             };
@@ -73,18 +73,31 @@ namespace PokerHandEvaluator
                 Name = "C",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"8", "Club"},
-                    new string[]{"13", "Club"},
+                    new string[]{"2", "Diamond"},
+                    new string[]{"14", "Heart"},
                 },
                 Chips = 0
             };
 
-            room.Chair0 = user1;
-            room.Chair3 = user2;
-            //room.Chair4 = user3;
+            ApplicationUser user4 = new ApplicationUser
+            {
+                Name = "D",
+                PlayerCards = new List<string[]>
+                {
+                    new string[]{"8", "Diamond"},
+                    new string[]{"3", "Spade"},
+                },
+                Chips = 0
+            };
 
-            room.PotOfChair0 = 25;
-            room.PotOfChair3 = 50;
+            //room.Chair0 = user1;
+            //room.Chair2 = user2;
+            room.Chair3 = user3;
+            //room.Chair4 = user4;
+
+            //room.PotOfChair0 = 25;
+            //room.PotOfChair2 = 50;
+            room.PotOfChair3 = 100;
             //room.PotOfChair4 = 100;
 
 

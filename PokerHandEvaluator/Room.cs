@@ -23,23 +23,28 @@ namespace PokerHandEvaluator
         public int PotOfChair2 { get; set; }
         public int PotOfChair3 { get; set; }
         public int PotOfChair4 { get; set; }
-        
 
-        public double EvaluateRankByHighestCards(List<string[]> cards, int excludeCardValue, int excludeCardValue2 = -1, int limitCheck = 7)
+
+        /*
+         * The problem to evaluate a sorted array and give it a "score" compatibles with change base problem and sum up result.
+         * So we'll normalize each value to be between 0..12 so we could change it to base 13, becaue essentially we describes a base-13 number.
+         * The reason for the normalize value is because division Sum {14 * 13^i} when i goes from 0 to 5, to normalize the result to be between [0,100]
+         */
+        public double EvaluateRankByHighestCards(List<string[]> cards, int excludeCardValue = -1, int excludeCardValue2 = -1, int limitCheck = 7, double normalize = 433175)
         {
-            if(cards.Count() != 7)
-                throw new Exception("Card list paramter must include 7 cards.");
-
             int i = 0;
             double sum = 0;
-            //foreach(var card in cards)
-            for(int j = 6; j >= 0; j--)
+            int fixedSize = cards.Count() - 1;
+
+            for (int j = fixedSize; j >= 0; j--)
             {
                 int cardValue = Int32.Parse(cards[j][0]);
                 if (cardValue == excludeCardValue || cardValue == excludeCardValue2)
                     continue;
 
-                sum += (double)cardValue / 14 + 6-i;
+                int normalizedValue = cardValue - 2; // since CardValue is an integer between [2,14]
+
+                sum += normalizedValue * Math.Pow(13, fixedSize - i);
 
                 if (i == limitCheck - 1)
                     break;
@@ -47,7 +52,7 @@ namespace PokerHandEvaluator
                 i++;
             }
 
-            return (double)sum / 35;
+            return (double)sum / normalize;
         }
 
         public HandRank GetPlayerHandRank(ApplicationUser user)
@@ -147,6 +152,7 @@ namespace PokerHandEvaluator
 
                     seqCount = 1;
                 }
+                Console.WriteLine("Test");
             }
 
             // The 7th card should be checked here
@@ -228,7 +234,7 @@ namespace PokerHandEvaluator
 
                 if (rankName == null)
                 {
-                    // For the other cases we'll sort descend the duplicates cards according to the amount.
+                    // For the other cases we'll sort descend the duplicates cards according by the amount.
                     duplicates.Sort((x, y) => (int)y[0] - (int)x[0]);
 
                     // Checks for Four of a kind, rank: [700, 800)
@@ -313,19 +319,13 @@ namespace PokerHandEvaluator
                                 // We only want the five last card
                                 var suitCardsResult = suitCards.Skip(suitCardsLen - 5).ToList();
                                 rankName = "Flush";
-                                //rank = 500 + (double)Int32.Parse(suitCardsResult[suitCardsLen - 1][0]) / 14 * 99;
-                                rank = 500;
-                                for (int i = 0; i < 5; i++)
-                                {
-                                    // We'll evaluate the 5 flush card in a way that the x+1 card always more important than x.
-                                    // For example, Ace in the 1st position = 14 + 0, and Two on the 2nd position worth 1 + 1/7.
-                                    rank += (double)Int32.Parse(suitCardsResult[i][0]) / 14 + i;
-                                }
+                                rank = 500 + EvaluateRankByHighestCards(suitCardsResult);
 
                                 rankCards.AddRange(suitCardsResult);
                                 break;
                             }
                         }
+
                         if (rankName == null)
                         {
                             // Checks for Straight, rank: [400, 500)
@@ -358,8 +358,14 @@ namespace PokerHandEvaluator
                             {
                                 rankName = "Three of a kind";
 
+                                rank = 300 + duplicates[0][1] / 14 * 50 + EvaluateRankByHighestCards(SevenCards, (int)duplicates[0][1]);
+
+                                for (int i = 0; i < 3; i++)
+                                    rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
+
                                 // Edge case: there are 2 pairs of Three of a kind, in that case we'll choose the higher one.
-                                if (duplicates.Count > 1 && duplicates[1][0] == 3)
+                                // PROBABLY WRONG ^ because it's a full house case.
+                                /*if (duplicates.Count > 1 && duplicates[1][0] == 3)
                                 {
                                     double tmpSaveMax = Math.Max(duplicates[0][1], duplicates[1][1]);
 
@@ -374,7 +380,7 @@ namespace PokerHandEvaluator
 
                                     for (int i = 0; i < 3; i++)
                                         rankCards.Add(new string[] { duplicates[0][1].ToString(), null });
-                                }
+                                }*/
                             }
 
                             // Checks for Two Pairs, rank: [200, 300)
@@ -391,7 +397,7 @@ namespace PokerHandEvaluator
                                     Array.Sort(threePairsValues, (x, y) => (int)(y - x));
 
                                     // The reason for 50 is because maxCardValue/14 can be 1, and we don't want to get the score 300.
-                                    // and the reason for /392 instead of /14 is because of calculate two numbers, so in the worst case they both will be 0.5 + 0.5 multiplied by 98 = 98 + 1 = 99.
+                                    // and its also the reason for /392 instead of /14 is.
                                     rank = 200 + (Math.Pow(threePairsValues[0], 2) / 392 + Math.Pow(threePairsValues[1], 2) / 392) * 50 + EvaluateRankByHighestCards(SevenCards, (int)threePairsValues[0], (int)threePairsValues[1]);
 
                                     // We need only the 2 highest pairs from the 3 pairs.
