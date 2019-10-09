@@ -1,4 +1,4 @@
-<img align="right" src="https://image.flaticon.com/icons/svg/2187/2187542.svg" width="260" />
+<a href="https://jspoker.net/"><img align="right" src="https://image.flaticon.com/icons/svg/2187/2187542.svg" width="260" /></a>
 
 # Texas holdem Rank Card Evaluator
 
@@ -105,6 +105,8 @@ static void Main(string[] args)
 }
 ```
 
+[The output can be found here](#full-example--spreadmoneytowinners-method-explanation)
+
 # In-depth explanation
 
 ## `EvaluateRankByHighestCards()` method
@@ -186,7 +188,6 @@ Main check: if duplicates.Count(), it can occur for example if we have 22 and 55
 
 1. It is possible to have 2 pairs of 3, for example: ( remember that we have 7 cards to check )
 
-
 | <img src="images/2-heart.png" width="60" /> | <img src="images/2-diamond.png" width="60" /> | <img src="images/2-spade.png" width="60" /> | <img src="images/3-club.png" width="60" /> | <img src="images/3-diamond.png" width="60" /> | <img src="images/3-heart.png" width="60" /> |
 | ------ | ------ | ------ | ------ | ------ | ------ |
 
@@ -242,7 +243,12 @@ We'll check for two duplicates. and evaluate the score accordingly.
 
 **Edge Case:**
 
-There are 3 pairs of two, in that case we'll choose the two highest pairs.
+There are 3 pairs of two, for example:
+
+| <img src="images/12-club.png" width="60" /> | <img src="images/12-spade.png" width="60" /> | <img src="images/8-diamond.png" width="60" /> | <img src="images/8-club.png" width="60" /> | <img src="images/3-diamond.png" width="60" /> | <img src="images/3-heart.png" width="60" /> |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+
+In that case we'll choose the two highest pairs.
 
 ### Pair `Group Range: [100, 200)`
 
