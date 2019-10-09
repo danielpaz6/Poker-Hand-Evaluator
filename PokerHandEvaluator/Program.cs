@@ -62,8 +62,8 @@ namespace PokerHandEvaluator
                 Name = "B",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"7", "Club"},
-                    new string[]{"12", "Club"},
+                    new string[]{"3", "Club"},
+                    new string[]{"13", "Club"},
                 },
                 Chips = 0
             };
@@ -90,15 +90,15 @@ namespace PokerHandEvaluator
                 Chips = 0
             };
 
-            //room.Chair0 = user1;
-            //room.Chair2 = user2;
+            room.Chair0 = user1;
+            room.Chair2 = user2;
             room.Chair3 = user3;
-            //room.Chair4 = user4;
+            room.Chair4 = user4;
 
-            //room.PotOfChair0 = 25;
-            //room.PotOfChair2 = 50;
+            room.PotOfChair0 = 25;
+            room.PotOfChair2 = 50;
             room.PotOfChair3 = 100;
-            //room.PotOfChair4 = 100;
+            room.PotOfChair4 = 100;
 
 
             var result = room.SpreadMoneyToWinners();

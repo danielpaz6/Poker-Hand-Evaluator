@@ -556,24 +556,28 @@ namespace PokerHandEvaluator
             {
                 int smallestDeck = getMinPotAmountGreaterThanZero();
                 List<ApplicationUser> contestedBy = new List<ApplicationUser>();
+                SidePot sidePot = new SidePot();
 
                 // In that case, 5 is the max players occupied.
                 for (int i = 0; i < 5; i++)
                 {
                     if (getPotByIndex(i) >= smallestDeck)
                     {
+                        // Saves the original pot of the user
+                        if (sidePot.OriginalPotAmount == 0)
+                            sidePot.OriginalPotAmount = getPotByIndex(i);
+
                         setPotByIndex(i, getPotByIndex(i) - smallestDeck);
                         contestedBy.Add(getUserByIndex(i));
                     }
                 }
 
                 string potName = sidePotCounter == 0 ? "Main Pot" : "Side Pot " + sidePotCounter;
-                finalPots.Add(new SidePot
-                {
-                    Name = potName,
-                    PotAmount = smallestDeck * contestedBy.Count(),
-                    ContestedBy = contestedBy
-                });
+                sidePot.Name = potName;
+                sidePot.PotAmount = smallestDeck * contestedBy.Count();
+                sidePot.ContestedBy = contestedBy;
+
+                finalPots.Add(sidePot);
 
                 sidePotCounter++;
             }
@@ -644,7 +648,8 @@ namespace PokerHandEvaluator
                     List<ApplicationUser> winnersMatch = winnerUsers.Intersect(item.ContestedBy).ToList();
 
                     // if it doesn't have any match, it doesn't matter and we can go to the next side pot to check for a match.
-                    if (winnersMatch.Count() > 0)
+                    // NOTE: we must check if item.Winners == null which means if this Side pot already taken, if it does we don't need to cehck it again.
+                    if (winnersMatch.Count() > 0 && item.Winners == null)
                     {
                         int amountOfEachPlayer = item.PotAmount / winnersMatch.Count();
 
