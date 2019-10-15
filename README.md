@@ -4,7 +4,8 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://jspoker.net) 
+[![GitHub issues](https://img.shields.io/github/issues/danielpaz6/Poker-Hand-Evaluator)](https://github.com/danielpaz6/Poker-Hand-Evaluator/issues)
 
 Texas Holdem Rank Evaluator Algorithm made in C#. And also a Side Pots Calculator and its algorithm with in-depth explanation, examples and the math behind.
 
@@ -235,7 +236,7 @@ Now the calculation is:
 
 The math behind: We need to make a formula so no matter how small is the Three of a kind, it will win others with smaller three of a kind, for example:
 
-If I have: 555 2 3 and someone has 333 A K, even though my A and K are really big, I'll lose. and we can achieve that by doing DuplicatedCardValue / 14 * 50 that even the smallest number: `(duplicatedCardValue: 2 / 14 * 50)` will be bigger than these A and K.
+If someone has: 555 2 3 and I have 333 A K, even though my A and K are really big, I'll lose. and we can achieve that by doing `DuplicatedCardValue / 14 * 50` that even the smallest number: `(duplicatedCardValue: 2 / 14 * 50)` will be bigger than these A and K.
 
 ### Two Pairs `Group Range: [200, 300)`
 
@@ -365,7 +366,7 @@ What we should do in order to get the final results is to iterate each PlayersRa
 
 For example, in the first iterate we have 500.850 and it contains Player1, and we are going to intersect it with every non-occupied SidePot, which is the "Main Pot" only.
 
-Then, in the next iterate280.813 that contains Player3 and Player4 with:
+Then, in the next iterate 280.813 that contains Player3 and Player4 with:
 - Main pot is already occupied, so we won't check it out.
 - Side Pot 1 - There's a match: Both Player3 and Player4 will be in this side pot.
 - Side Pot 2 - There's a match: Both Player3 and Player4 will be in this side pot.
@@ -374,7 +375,7 @@ Each player will have: `SidePotAmount / Winners.Count()`
 
 No more non-occupied side pots, hence, we can stop here.
 
-Final results:
+Final result:
 
 ```
 {
