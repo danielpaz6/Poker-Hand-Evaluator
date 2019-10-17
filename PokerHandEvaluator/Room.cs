@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -152,7 +153,6 @@ namespace PokerHandEvaluator
 
                     seqCount = 1;
                 }
-                Console.WriteLine("Test");
             }
 
             // The 7th card should be checked here
@@ -626,6 +626,8 @@ namespace PokerHandEvaluator
             //handList = handList.GroupBy(x => x.Rank).Select(grp => grp.ToList()).ToList();
             //List<List<HandRank>> totalWinners = new List<List<HandRank>>();
             List<List<HandRank>> totalWinners = handList.GroupBy(x => x.Rank).Select(grp => grp.ToList()).ToList();
+
+            var json = JsonConvert.SerializeObject(totalWinners);
 
             sidePotList = this.CalculateMainAndSidePots();
 

@@ -16,20 +16,6 @@ namespace PokerHandEvaluator
          * NOTE: special values: 11 - Joker, 12 - Queen, 13 - King, 14 - Ace
          */
 
-        /*static void print(object o)
-        {
-            Console.WriteLine("------------------------");
-            Console.WriteLine("RankName: " + rankName);
-            Console.WriteLine("Rank: " + rank);
-            Console.WriteLine("Your Cards:");
-            foreach (string[] card in rankCards)
-            {
-                Console.WriteLine("--- Value: " + card[0]);
-                Console.WriteLine("--- Suit: " + card[1] ?? "none");
-            }
-            Console.WriteLine("------------------------");
-        }*/
-
         static void Main(string[] args)
         {
             // Suits: club (♣), diamond (♦), heart (♥) and spade (♠).
@@ -38,11 +24,11 @@ namespace PokerHandEvaluator
                 RoomName = "Test Room",
                 CardsOnTable = new List<string[]>
                 {
-                    new string[]{"4", "Club"},
-                    new string[]{"5", "Club"}, 
-                    new string[]{"3", "Diamond"},
-                    new string[]{"5", "Spade"},
-                    new string[]{"10", "Club" }
+                    new string[]{"14", "Club"},
+                    new string[]{"13", "Club"}, 
+                    new string[]{"11", "Club"},
+                    new string[]{"5", "Club"},
+                    new string[]{"10", "Heart" }
                 }
             };
 
@@ -51,8 +37,8 @@ namespace PokerHandEvaluator
                 Name = "A",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"3", "Club"},
-                    new string[]{"13", "Club"},
+                    new string[]{"8", "Club"},
+                    new string[]{"7", "Heart"},
                 },
                 Chips = 0
             };
@@ -62,8 +48,8 @@ namespace PokerHandEvaluator
                 Name = "B",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"3", "Club"},
-                    new string[]{"13", "Club"},
+                    new string[]{"9", "Heart"},
+                    new string[]{"5", "Heart"},
                 },
                 Chips = 0
             };
@@ -73,8 +59,8 @@ namespace PokerHandEvaluator
                 Name = "C",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"2", "Diamond"},
-                    new string[]{"14", "Heart"},
+                    new string[]{"14", "Diamond"},
+                    new string[]{"4", "Spade"},
                 },
                 Chips = 0
             };
@@ -84,8 +70,8 @@ namespace PokerHandEvaluator
                 Name = "D",
                 PlayerCards = new List<string[]>
                 {
-                    new string[]{"8", "Diamond"},
-                    new string[]{"3", "Spade"},
+                    new string[]{"14", "Spade"},
+                    new string[]{"3", "Heart"},
                 },
                 Chips = 0
             };

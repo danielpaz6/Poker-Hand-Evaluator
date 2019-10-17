@@ -1,0 +1,145 @@
+﻿.table {
+    width: 600px;
+    height: 300px;
+    border: 2px solid #737373;
+    box-shadow: inset 0px 0px 0px 3px #f1f1f1;
+    margin: auto;
+    margin-top: 10%;
+    border-radius: 20px;
+    position: relative;
+}
+
+.table-title {
+    position: absolute;
+    transform: translateX(-50%) translateY(-50%);
+    top: -15%;
+    left: 50%;
+}
+
+.table-title h1 {
+    font-size: 42px;
+}
+
+.table-cards {
+    position: absolute;
+    transform: translateX(-50%) translateY(-50%);
+    top: 45%;
+    left: 49.5%;
+    box-sizing: border-box;
+    width: 225px;
+    height: 30px;
+}
+
+
+.table-cards img, .player img {
+    display: inline-block;
+    margin-right: -10px;
+    opacity: 0.8;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.table-cards img:hover, .player img:hover {
+    opacity: 1;
+}
+
+.player {
+    position: absolute;
+    transform: translateX(-50%) translateY(-50%);
+    background: #fff;
+    border: 1px solid #fff;
+    width: 130px;
+    height: 80px;
+    padding: 15px;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.table-text {
+    position: absolute;
+    transform: translateX(-50%) translateY(-50%);
+    left: 50%;
+    top: 20%;
+}
+
+    .table-text h2 {
+        font-size: 16px;
+        color: #6b6b6b;
+    }
+
+.details {
+    font-size: 10px;
+    line-height: 1.6em;
+    margin-top: 7px;
+    display: none;
+}
+
+.active .player {
+    border-color: #efefef;
+    height: 130px;
+}
+
+.active .first {
+    border-color: green;
+    transition: border-color 0.4s linear 0.3s;
+}
+
+.active .player .details {
+    display: block;
+}
+
+/*
+.player:hover {
+    border-color: #efefef;
+    height: 130px;
+}
+*/
+
+.player1 {
+    top: 20%;
+    left: 0%;
+}
+
+.player2 {
+    top: 20%;
+    left: 100%;
+}
+
+.player3 {
+    top: 80%;
+    left: 100%;
+}
+
+.player4 {
+    left: 50%;
+    top: 100%;
+}
+
+.player5 {
+    top: 80%;
+    left: 0%;
+}
+
+.right-panel {
+    position: fixed;
+    top: 25px;
+    right: 30px;
+    width: 30px;
+}
+
+.right-panel img {
+    margin-bottom: 20px;
+    width: 30px;
+    height: 30px;
+    opacity: 0.5;
+    transition: all 0.5s;
+}
+
+.right-panel a:hover img {
+    opacity: 1;
+}
+
+.tooltip {
+    left: -3px !important;
+}
