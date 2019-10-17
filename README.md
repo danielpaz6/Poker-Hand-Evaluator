@@ -1,10 +1,11 @@
-<img align="right" src="https://image.flaticon.com/icons/svg/2187/2187542.svg" width="260" />
+<a href="https://jspoker.net/"><img align="right" src="https://image.flaticon.com/icons/svg/2187/2187542.svg" width="260" /></a>
 
 # Texas holdem Rank Card Evaluator
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://jspoker.net) 
+[![GitHub issues](https://img.shields.io/github/issues/danielpaz6/Poker-Hand-Evaluator)](https://github.com/danielpaz6/Poker-Hand-Evaluator/issues)
 
 Texas Holdem Rank Evaluator Algorithm made in C#. And also a Side Pots Calculator and its algorithm with in-depth explanation, examples and the math behind.
 
@@ -23,22 +24,89 @@ Then, we run a pre-evaluator that will give us initial information about the sam
 And then, in the last step, we will look into which Rank Group belongs to and then the cards in that group will be evaluated.
 
 
-You can also:
-  - Import and save files from GitHub, Dropbox, Google Drive and One Drive
-  - Drag and drop markdown and HTML files into Dillinger
-  - Export documents as Markdown, HTML and PDF
+**A full example:**
 
-Markdown is a lightweight markup language based on the formatting conventions that people naturally use in email.  As [John Gruber] writes on the [Markdown site][df1]
+```csharp
+static void Main(string[] args)
+{
+	// Suits: club (♣), diamond (♦), heart (♥) and spade (♠).
+	Room room = new Room
+	{
+		RoomName = "Test Room",
+		CardsOnTable = new List<string[]>
+		{
+			new string[]{"14", "Club"},
+			new string[]{"13", "Club"}, 
+			new string[]{"11", "Club"},
+			new string[]{"5", "Club"},
+			new string[]{"10", "Heart" }
+		}
+	};
 
-> The overriding design goal for Markdown's
-> formatting syntax is to make it as readable
-> as possible. The idea is that a
-> Markdown-formatted document should be
-> publishable as-is, as plain text, without
-> looking like it's been marked up with tags
-> or formatting instructions.
+	ApplicationUser user1 = new ApplicationUser
+	{
+		Name = "A",
+		PlayerCards = new List<string[]>
+		{
+			new string[]{"8", "Club"},
+			new string[]{"7", "Heart"},
+		},
+		Chips = 0
+	};
 
-This text you see here is *actually* written in Markdown! To get a feel for Markdown's syntax, type some text into the left window and watch the results in the right.
+	ApplicationUser user2 = new ApplicationUser
+	{
+		Name = "B",
+		PlayerCards = new List<string[]>
+		{
+			new string[]{"9", "Heart"},
+			new string[]{"5", "Heart"},
+		},
+		Chips = 0
+	};
+
+	ApplicationUser user3 = new ApplicationUser
+	{
+		Name = "C",
+		PlayerCards = new List<string[]>
+		{
+			new string[]{"14", "Diamond"},
+			new string[]{"4", "Spade"},
+		},
+		Chips = 0
+	};
+
+	ApplicationUser user4 = new ApplicationUser
+	{
+		Name = "D",
+		PlayerCards = new List<string[]>
+		{
+			new string[]{"14", "Spade"},
+			new string[]{"3", "Heart"},
+		},
+		Chips = 0
+	};
+
+	room.Chair0 = user1;
+	room.Chair2 = user2;
+	room.Chair3 = user3;
+	room.Chair4 = user4;
+
+	room.PotOfChair0 = 25;
+	room.PotOfChair2 = 50;
+	room.PotOfChair3 = 100;
+	room.PotOfChair4 = 100;
+
+
+	var result = room.SpreadMoneyToWinners();
+
+	Console.WriteLine(result);
+	Console.ReadKey();
+
+}
+```
+
+[The output can be found here](#full-example--spreadmoneytowinners-method-explanation)
 
 # In-depth explanation
 
@@ -121,7 +189,6 @@ Main check: if duplicates.Count(), it can occur for example if we have 22 and 55
 
 1. It is possible to have 2 pairs of 3, for example: ( remember that we have 7 cards to check )
 
-
 | <img src="images/2-heart.png" width="60" /> | <img src="images/2-diamond.png" width="60" /> | <img src="images/2-spade.png" width="60" /> | <img src="images/3-club.png" width="60" /> | <img src="images/3-diamond.png" width="60" /> | <img src="images/3-heart.png" width="60" /> |
 | ------ | ------ | ------ | ------ | ------ | ------ |
 
@@ -169,7 +236,7 @@ Now the calculation is:
 
 The math behind: We need to make a formula so no matter how small is the Three of a kind, it will win others with smaller three of a kind, for example:
 
-If I have: 555 2 3 and someone has 333 A K, even though my A and K are really big, I'll lose. and we can achieve that by doing DuplicatedCardValue / 14 * 50 that even the smallest number: `(duplicatedCardValue: 2 / 14 * 50)` will be bigger than these A and K.
+If someone has: 555 2 3 and I have 333 A K, even though my A and K are really big, I'll lose. and we can achieve that by doing `DuplicatedCardValue / 14 * 50` that even the smallest number: `(duplicatedCardValue: 2 / 14 * 50)` will be bigger than these A and K.
 
 ### Two Pairs `Group Range: [200, 300)`
 
@@ -177,7 +244,12 @@ We'll check for two duplicates. and evaluate the score accordingly.
 
 **Edge Case:**
 
-There are 3 pairs of two, in that case we'll choose the two highest pairs.
+There are 3 pairs of two, for example:
+
+| <img src="images/12-club.png" width="60" /> | <img src="images/12-spade.png" width="60" /> | <img src="images/8-diamond.png" width="60" /> | <img src="images/8-club.png" width="60" /> | <img src="images/3-diamond.png" width="60" /> | <img src="images/3-heart.png" width="60" /> |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+
+In that case we'll choose the two highest pairs.
 
 ### Pair `Group Range: [100, 200)`
 
@@ -186,3 +258,152 @@ There's only one pair, otherwise we would have entered the "Two Pair" case, so w
 ### High Card `Group Range: [0, 100)`
 
 Otherwise, if we couldn't find anything else, we'll just `EvaluateRankByHighestCards()` the rest of the cards.
+
+# Main and Side Pots algorithm and money spreading
+
+## `CalculateMainAndSidePots()` Method
+
+Imagine the following situation:
+We have three players: A, B and C.
+
+The three players make an all-in when:
+- A makes an all-in when he has $ 25
+- B makes an all-in when he has $ 50
+- C makes an all-in when he has $ 100
+
+This means that right now there is $ 175 on the table and we have to think how to split it between the players.
+
+So first thing to do, it calculate the Main and Side Pots as follows:
+
+1. Consider a new variable `X` as:
+
+<p align="center">
+  <img src="/images/potchips.png" width="300" />
+</p>
+
+The minimum among the pots of the players.
+In our example `X = $ 25`.
+
+2. Let's start a new variable `sum` initialized to 0. And take from each player `X` money and put it into `sum`.
+Which means at this point `sum = $ 75` and the current player status is:
+* A - $ 0
+* B - $ 25
+* C - $ 75
+
+Also, we took money from all three players, so the money was contested by A, B and C.
+
+(Since we took `X` from each player)
+
+3. We will repeat this process recursively until we remain in a state where:
+  Only one player has a sum greater than zero or they all have a sum equal to zero.
+  
+So in the next iteration `x = $ 25` once again, and we'll take money from each available player:
+`sum = $ 50` and it was contested by B and C.
+and player status:
+
+* A - $ 0
+* B - $ 0
+* C - $ 50
+
+now we are in a stop condition: only one player has money, player C and we going to give him back the rest of the money.
+
+So in the end of method we managed to gain this information:
+
+```
+{
+  Name: Main Pot,
+  Money: 75$,
+  Contested By: [Player A, Player B, Player C]
+},
+{
+  Name: Side Pot 1,
+  Money: 50$,
+  Contested By: [Player B, Player C]
+}
+```
+
+There are several situations:
+
+1. **Player A wins:** in that case he will take the Main pot and we'll check who has better hand player B or player C for the Side Pot 1.
+2. **Player B Wins:** He'll take both Main and Side pots.
+3. **Player C wins:** He'll take both Main and Side pots.
+
+## Full Example & `SpreadMoneyToWinners()` method explanation
+
+This method uses two previous methods that we explained: in both `CalculateMainAndSidePots` and `GetPlayerHandRank`, and both of them extract the racial data on who wins each side pot.
+
+Let's take a look on full example:
+
+We have 4 players and this is their Hands and the Table Cards:
+
+***Table Cards***:
+
+| <img src="images/14-club.png" width="60" /> | <img src="images/13-club.png" width="60" /> | <img src="images/11-club.png" width="60" /> | <img src="images/5-club.png" width="60" /> | <img src="images/10-heart.png" width="60" /> |
+| ------ | ------ | ------ | ------ | ------ |
+
+***Players Cards***:
+
+| Player 1 | Player 2 | Player 3 | Player 4 |
+| ------ | ------ | ------ | ------ |
+| <img src="images/man1.svg" width="60" /> | <img src="images/man2.svg" width="60" /> | <img src="images/man3.svg" width="60" /> | <img src="images/man4.svg" width="60" /> |
+| <img src="images/8-club.png" width="60" /> <img src="images/7-heart.png" width="60" /> | <img src="images/9-heart.png" width="60" /> <img src="images/5-heart.png" width="60" /> | <img src="images/14-diamond.png" width="60" /> <img src="images/4-spade.png" width="60" /> | <img src="images/14-spade.png" width="60" /> <img src="images/3-heart.png" width="60" /> |
+| All-in: 25 $ | All-in: 50 $ | All-in: 100 $ | All-in: 100 $ |
+
+The results will be:
+
+| `GetPlayerHandRank()` grouped by results | `CalculateMainAndSidePots()` results |
+| ------ | ------ |
+| 500.850 - `[Player 1]` - Flush<br />280.813 - `[Player 3, Player 4]` - Pair<br />261.593 - `[Player 2]` - Pair | Main Pot - 100 $ - `Contested by: [Player 1, Player2, Player3, Player4]`<br />Side Pot 1 - 75$ - `Contested by: [Player 2, Player 3, Player 4]`<br />Side Pot 2 - 100$ - `Contested by: [Player 3, Player 4]` |
+
+Consider the left column results ( player hand rank groupped by sored by the hand rank ) as `PlayersHand`<br />
+Consider the right column results ( Main and Side Pots ) as `SidePots`
+
+What we should do in order to get the final results is to iterate each PlayersRank item intersect with each non-occuppied SidePot:
+
+<p align="center">
+  <img src="/images/finalresult.png" width="500" />
+</p>
+
+For example, in the first iterate we have 500.850 and it contains Player1, and we are going to intersect it with every non-occupied SidePot, which is the "Main Pot" only.
+
+Then, in the next iterate 280.813 that contains Player3 and Player4 with:
+- Main pot is already occupied, so we won't check it out.
+- Side Pot 1 - There's a match: Both Player3 and Player4 will be in this side pot.
+- Side Pot 2 - There's a match: Both Player3 and Player4 will be in this side pot.
+
+Each player will have: `SidePotAmount / Winners.Count()`
+
+No more non-occupied side pots, hence, we can stop here.
+
+Final result:
+
+```
+{
+  Main Pot,
+  100 $,
+  Winners: [Player 1]
+  Each player will get: 100$
+}
+{
+  Side Pot 1,
+  75 $,
+  Winners: [Player 3, Player 4]
+  Each player will get: 37.5$
+}
+{
+  Side Pot 2,
+  100 $,
+  Winners: [Player 3, Player 4]
+  Each player will get: 50$
+}
+```
+
+
+## Built and Designed With
+
+* [flaticon](https://www.flaticon.com/) - Icon made by Freepik from www.flaticon.com
+
+
+## Authors
+
+* **Daniel Paz** - *Whole Project* - [Profile](https://github.com/DanielPaz6)
