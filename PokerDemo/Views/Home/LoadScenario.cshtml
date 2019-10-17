@@ -1,0 +1,36 @@
+﻿@model PokerDemo.Models.ResultViewModel
+@{
+    Layout = null;
+}
+
+
+<div class="table-cards">
+    @foreach (var item in Model.Room.CardsOnTable)
+    {
+        <img alt="@(item[0]) of @(item[1]) icon" src="https://img.icons8.com/ios/2x/@(ViewBag.FixedValue[item[0]])-of-@(ViewBag.FixedSuit[item[1]]).png" style="height: 50px; width: 50px;">
+    }
+</div>
+
+@for (int i = 0; i < Model.Users.Count(); i++)
+{
+    var user = Model.Users[i];
+    <div class="player player@(i + 1)">
+        @for (int j = 0; j < 2; j++)
+        {
+            var item = user.PlayerCards[j];
+
+            <img alt="@(item[0]) of @(item[1]) icon" src="https://img.icons8.com/ios/2x/@(ViewBag.FixedValue[item[0]])-of-@(ViewBag.FixedSuit[item[1]]).png" style="height: 50px; width: 50px;">
+        }
+
+        @{
+            var t = Model.FindUserSidePot(user);
+
+        }
+
+        <div class="details">
+            Rank Name: <strong>@(t.Item1.RankName)</strong><br />
+            Rank Value: <strong>@string.Format("{0:F3}", t.Item1.Rank)</strong><br />
+            Position: <strong>@(ViewBag.FixedPosition[t.Item2])</strong><br />
+        </div>
+    </div>
+}
