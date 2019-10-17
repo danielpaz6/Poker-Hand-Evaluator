@@ -2,10 +2,9 @@
 
 # Texas holdem Rank Card Evaluator
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
-
-[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://jspoker.net) 
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](http://evaluator.jspoker.net/) 
 [![GitHub issues](https://img.shields.io/github/issues/danielpaz6/Poker-Hand-Evaluator)](https://github.com/danielpaz6/Poker-Hand-Evaluator/issues)
+[![Implemented Demo](https://img.shields.io/badge/implemented%20project%20with%20this%20algorithm-live%20demo-brightgreen)](https://jspoker.net)
 
 Texas Holdem Rank Evaluator Algorithm made in C#. And also a Side Pots Calculator and its algorithm with in-depth explanation, examples and the math behind.
 
@@ -15,14 +14,9 @@ Texas Holdem Rank Evaluator Algorithm made in C#. And also a Side Pots Calculato
 
 # Demonstration
 
-<img align="center" src="/images/pokerdemo.gif" />
-
-What we see in the example above is the unification of the cards that are on the table with the cards each player has.
-
-Then, we run a pre-evaluator that will give us initial information about the same cards as the highest card, how many cards are in the sequence, how many have the same color, etc.
-
-And then, in the last step, we will look into which Rank Group belongs to and then the cards in that group will be evaluated.
-
+<p align="center">
+	<img src="/images/webdemo.png" width="750" />	
+</p>
 
 **A full example:**
 
@@ -109,6 +103,14 @@ static void Main(string[] args)
 [The output can be found here](#full-example--spreadmoneytowinners-method-explanation)
 
 # In-depth explanation
+
+<img align="center" src="/images/pokerdemo.gif" />
+
+What we see in the example above is the unification of the cards that are on the table with the cards each player has.
+
+Then, we run a pre-evaluator that will give us initial information about the same cards as the highest card, how many cards are in the sequence, how many have the same color, etc.
+
+And then, in the last step, we will look into which Rank Group belongs to and then the cards in that group will be evaluated.
 
 ## `EvaluateRankByHighestCards()` method
 
