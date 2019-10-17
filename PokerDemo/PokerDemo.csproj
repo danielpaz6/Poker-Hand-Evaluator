@@ -156,7 +156,6 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
-    <Content Include="tmp.html" />
     <Content Include="Resources\Cards\icons8-10-of-clubs-50.png" />
     <Content Include="Resources\Cards\icons8-10-of-diamonds-50.png" />
     <Content Include="Resources\Cards\icons8-10-of-hearts-50.png" />
