@@ -7,7 +7,7 @@
 <div class="table-cards">
     @foreach (var item in Model.Room.CardsOnTable)
     {
-        <img alt="@(item[0]) of @(item[1]) icon" src="https://img.icons8.com/ios/2x/@(ViewBag.FixedValue[item[0]])-of-@(ViewBag.FixedSuit[item[1]]).png" style="height: 50px; width: 50px;">
+        <img data-toggle="tooltip" data-placement="top" title="@(item[0]) of @(item[1])" alt="@(item[0]) of @(item[1]) icon" src="https://img.icons8.com/ios/2x/@(ViewBag.FixedValue[item[0]])-of-@(ViewBag.FixedSuit[item[1]]).png" style="height: 50px; width: 50px;">
     }
 </div>
 
@@ -19,7 +19,7 @@
         {
             var item = user.PlayerCards[j];
 
-            <img alt="@(item[0]) of @(item[1]) icon" src="https://img.icons8.com/ios/2x/@(ViewBag.FixedValue[item[0]])-of-@(ViewBag.FixedSuit[item[1]]).png" style="height: 50px; width: 50px;">
+            <img data-toggle="tooltip" data-placement="top" title="@(item[0]) of @(item[1])" alt="@(item[0]) of @(item[1]) icon" src="https://img.icons8.com/ios/2x/@(ViewBag.FixedValue[item[0]])-of-@(ViewBag.FixedSuit[item[1]]).png" style="height: 50px; width: 50px;">
         }
 
         @{
@@ -28,9 +28,15 @@
         }
 
         <div class="details">
-            Rank Name: <strong>@(t.Item1.RankName)</strong><br />
+            <strong style="text-decoration: underline;">@(t.Item1.RankName)</strong><br />
             Rank Value: <strong>@string.Format("{0:F3}", t.Item1.Rank)</strong><br />
             Position: <strong>@(ViewBag.FixedPosition[t.Item2])</strong><br />
         </div>
     </div>
 }
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
