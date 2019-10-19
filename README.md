@@ -15,7 +15,7 @@ Texas Holdem Rank Evaluator Algorithm made in C#. And also a Side Pots Calculato
 # Demonstration
 
 <p align="center">
-	<img src="/images/webdemo.png" width="750" />	
+	<a href="http://evaluator.jspoker.net/"><img src="/images/webdemo.png" width="750" /></a>
 </p>
 
 **A full example:**
